@@ -7,4 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = ['name', 'description', 'price', 'stock'];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }
