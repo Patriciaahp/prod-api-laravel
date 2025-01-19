@@ -7,5 +7,3 @@ use App\Http\Controllers\ProductController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::apiResource('products', ProductController::class);
