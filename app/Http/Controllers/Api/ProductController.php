@@ -8,64 +8,45 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return response()->json(Product::with('category')->get()); 
+        // Recupera todos los productos
+        return Product::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $product = Product::create($request->all());
+        // Validación de la entrada
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+        ]);
+
+        // Crea un nuevo producto
+        $product = Product::create($validated);
+
         return response()->json($product, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        $product = Product::with('category')->findOrFail($id);
+        $product = Product::findOrFail($id);
         return response()->json($product);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
         $product->update($request->all());
+
         return response()->json($product);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-         Product::destroy($id);
+        $product = Product::findOrFail($id);
+        $product->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -10,7 +10,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('categories', CategoryController::class);
-Route::apiResource('products', ProductController::class);
+Route::get('products', function () {
+    return response()->json(['message' => 'Productos listados']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
