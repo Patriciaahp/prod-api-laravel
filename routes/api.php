@@ -4,20 +4,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\AuthController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
-Route::apiResource('categories', CategoryController::class);
-Route::get('products', function () {
-    return response()->json(['message' => 'Productos listados']);
-});
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->resource('products', ProductController::class);
+Route::middleware('auth:sanctum')->post('products/{id}/categories', [ProductController::class, 'assignCategories']);
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API funcionando correctamente']);
 });
+
