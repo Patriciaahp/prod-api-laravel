@@ -6,14 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'description', 'price', 'stock'];
+     use HasFactory;
 
-    public function products()
+    public function category()
     {
-        return $this->belongsToMany(Product::class);
-    }
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsTo(Category::class);
     }
 }
