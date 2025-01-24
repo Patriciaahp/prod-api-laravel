@@ -9,32 +9,19 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function assignCategories(Request $request, $id)
-    {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-
-        $request->validate([
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
-        ]);
-
-        $product->categories()->sync($request->category_ids);
-        return response()->json(['message' => 'Categorías asignadas con éxito']);
-    }
-    
     public function index(Request $request)
     {
-        $products = Product::when($request->name, function ($query) use ($request) {
-            return $query->where('name', 'like', '%' . $request->name . '%');
-        })
-        ->when($request->price, function ($query) use ($request) {
-            return $query->where('price', $request->price);
-        })
-        ->paginate(10);
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('min_price') && $request->has('max_price')) {
+            $query->whereBetween('price', [$request->min_price, $request->max_price]);
+        }
+
+        $products = $query->paginate(10);
 
         return response()->json($products);
     }
@@ -53,7 +40,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::find($id);
+        $product = Product::with('categories')->find($id);
 
         if (!$product) {
             return response()->json(['message' => 'Producto no encontrado'], 404);
@@ -78,6 +65,29 @@ class ProductController extends Controller
 
         $product->update($request->all());
         return response()->json($product);
+    }
+
+    public function assignCategories(Request $request, $productId)
+    {
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json(['message' => 'Producto no encontrado.'], 404);
+        }
+
+        if (!$request->has('category_ids') || !is_array($request->category_ids)) {
+            return response()->json(['message' => 'Se requiere un array de category_ids.'], 400);
+        }
+
+        $categories = Category::find($request->category_ids);
+
+        if (count($categories) != count($request->category_ids)) {
+            return response()->json(['message' => 'Una o más categorías no existen.'], 404);
+        }
+
+        $product->categories()->sync($request->category_ids);
+
+        return response()->json(['message' => 'Categorías asignadas correctamente.']);
     }
 
     public function destroy($id)

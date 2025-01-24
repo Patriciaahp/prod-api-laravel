@@ -27,7 +27,6 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
-    // Mostrar una categoría específica por su id
     public function show($id)
     {
         $category = Category::find($id);
@@ -39,7 +38,6 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    // Actualizar una categoría existente
     public function update(Request $request, $id)
     {
         $category = Category::find($id);
@@ -56,7 +54,6 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    // Eliminar una categoría
     public function destroy($id)
     {
         $category = Category::find($id);

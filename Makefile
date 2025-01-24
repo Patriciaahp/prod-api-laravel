@@ -67,3 +67,6 @@ work:
 
 sleep:
 		 echo 'Un momento por favor, estamos preparando el sistema' && sleep 8
+
+coverage:
+		docker-compose exec --user=${UID} ${DOCKER_PHP_SERVICE} bash -c "vendor/bin/phpunit --coverage-html build/coverage"

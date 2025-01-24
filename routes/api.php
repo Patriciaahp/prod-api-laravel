@@ -13,8 +13,4 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 
 Route::middleware('auth:sanctum')->resource('products', ProductController::class);
 Route::middleware('auth:sanctum')->post('products/{id}/categories', [ProductController::class, 'assignCategories']);
-
-Route::get('/test', function () {
-    return response()->json(['message' => 'API funcionando correctamente']);
-});
-
+Route::middleware('auth:sanctum')->resource('categories', CategoryController::class);
